@@ -28,3 +28,14 @@ echo "🛑 Stopping EC2 instance..."
 aws ec2 stop-instances --instance-ids $INSTANCE_ID
 
 echo "✅ Instance $INSTANCE_ID has been stopped."
+
+
+echo "🗂 Uploading EC2 log to S3 bucket..."
+echo "Sample log text" > dummy.log
+aws s3 cp dummy.log s3://tech-eazy-akshata-logs/sample-log-$(date +%s).log
+echo "✅ Log uploaded to S3."
+
+echo " Stopping EC2 instance..."
+aws ec2 stop-instances --instance-ids $INSTANCE_ID
+echo " Instance $INSTANCE_ID has been stopped."
+
