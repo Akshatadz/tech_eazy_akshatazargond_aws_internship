@@ -1,60 +1,39 @@
 # AWS EC2 DevOps Automation - Internship Assignment 2 IAM + S3 + Automation
+In Assignment 2, I improved my previous EC2 automation by adding IAM roles and S3 bucket integration.
 
-## What I Did:
-This assignment is about automating EC2, IAM Roles, and S3 using a shell script (deploy.sh).
+## IAM Roles Created:
+I created two IAM roles:
 
-## Steps I Followed:
-### 1. Created IAM Roles:
-Role_A: Can only read files from the S3 bucket.
+Role_A – This role has read-only permission to S3. It can only view or list the files in the bucket.
 
-Role_B: Can only upload (write) files to the S3 bucket.
+Role_B – This role has write-only permission, which means it can only upload files to the S3 bucket but can’t read or delete them.
 
-### 2. Created S3 Bucket:
-Name of the bucket: tech-eazy-akshata-logs
+## EC2 Instance:
+Then I launched a new EC2 instance and attached Role_B using something called instance profile, so that the EC2 machine can upload logs to the S3 bucket securely without using any access keys.
 
-Region: ap-south-1 (Mumbai)
+## S3 Bucket:
+I created a private S3 bucket called tech-eazy-akshata-logs in the Mumbai (ap-south-1) region.
 
-I added a lifecycle rule to delete logs automatically after 7 days.
+After that, I added a lifecycle rule to the bucket. This rule automatically deletes logs after 7 days, so we don’t store unnecessary files and avoid extra charges.
 
-### 3. Wrote a Shell Script (deploy.sh):
-The script performs:
-
-Launching an EC2 instance
-
-Waiting to simulate some task
-
-Uploading a dummy log file to the S3 bucket using:
-
+## Script Updated:
+I added one extra step in my deploy.sh script to create a dummy log file and upload it to the S3 bucket using this command:
 aws s3 cp dummy.log s3://tech-eazy-akshata-logs/sample-log-<timestamp>.log
-Stopping the EC2 instance to save cost
+This shows that Role_B can successfully upload files.
 
-### 4. Attached Role_B to EC2:
-While launching the EC2, I attached Role_B to it so that it can upload logs to S3 without needing credentials.
+## Role_A Verification:
+Then I used Role_A to test whether I can list the files in the bucket using:
+aws s3 ls s3://tech-eazy-akshata-logs
+It worked, which confirms Role_A has correct read-only access.
 
-### 5. Verified:
-I connected to the EC2 using:
-ssh -i mykey.pem ec2-user@<public-ip>
+## For Security:
+I didn’t upload any .pem file or AWS credentials to GitHub.
 
-Inside EC2, I uploaded the file to S3:
-echo "Test log upload" > dummy.log
-aws s3 cp dummy.log s3://tech-eazy-akshata-logs/
+All roles and permissions were attached properly.
 
-Used Role_A on another EC2 to list the uploaded file:
-aws s3 ls s3://tech-eazy-akshata-logs/
+The log upload was tested successfully.
 
-### Security Notes:
-I did not upload .pem or secret keys to GitHub.
 
-Permissions are controlled using IAM roles only.
-
- ### How to Run:
-Make sure AWS CLI is configured.
-
-Ensure key pair mykey is created.
-
-Run the script using:
-bash deploy.sh
-Connect to EC2 and test S3 upload.
 
 
 
